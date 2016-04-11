@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 public class Score : MonoBehaviour {
 
-	static int score = 0;
+	public static int score = 0;
 	static int highScore = 0;
 
 	public static Score instance;
 
+
+	
 	static public void AddPoint() {
 		if(instance.bird.dead)
 			return;
@@ -35,6 +37,9 @@ public class Score : MonoBehaviour {
 		instance = this;
 
 		GameObject player_go = GameObject.FindGameObjectWithTag("Player");
+		
+		GameObject[] pipes = GameObject.FindGameObjectsWithTag("Pipe");
+
 
 		if(player_go == null) {
 			Debug.LogError("Could not find an object with tag 'Player'.");
@@ -52,5 +57,7 @@ public class Score : MonoBehaviour {
 
 	void Update () {
 		GetComponent<GUIText>().text = "Distance: " + score +" M"+"\nRecord: " + highScore + " M";
+
+		
 	}
 }

@@ -25,6 +25,8 @@ public class BirdMovement : MonoBehaviour {
 		public bool contarTempo = false;
 
 		public bool pauseBirdActive;
+		public int countColision = 0;
+		public bool canCountColision;
 
 		GameObject startScreen;
 
@@ -40,10 +42,12 @@ public class BirdMovement : MonoBehaviour {
 			}
 
 			time = GameObject.FindGameObjectWithTag("Time");
-			startScreen = GameObject.FindGameObjectWithTag("StartScreen");
-			dateTime = new DateTime (1,1,1,1,6,0);
+				startScreen = GameObject.FindGameObjectWithTag("StartScreen");
+			dateTime = new DateTime (1,1,1,1,1,0);
 			time.GetComponent<GUIText>().text = String.Format ("{0:mm:ss}", dateTime);
-
+			
+			countColision = 0;
+			canCountColision = false;
 	
 		}
 
@@ -64,6 +68,7 @@ public class BirdMovement : MonoBehaviour {
 				if (Input.touchCount > 0) {
 						if (Input.GetTouch (0).phase == TouchPhase.Began) {
 							didFlap = true;
+
 						} 
 				}
 			}
@@ -73,6 +78,9 @@ public class BirdMovement : MonoBehaviour {
 			}
 
 			if (fimTempo) {
+					GameManager.Instancia.Log("Tempo Esgotado \t Velocidade: " + GetComponent<ChangeDifficulty>().birdVelocity + 
+								"\tEspaçamento: " + GetComponent<ChangeDifficulty>().spacing + "\tDistancia: " + Score.score);
+						
 					animator.SetTrigger ("Death");
 					dead = true;
 			}
@@ -103,7 +111,9 @@ public class BirdMovement : MonoBehaviour {
 						}
 				animator.SetTrigger("DoFlap");
 
-
+						GameManager.Instancia.Log("Pulou \t Velocidade: " + GetComponent<ChangeDifficulty>().birdVelocity + 
+								"\tEspaçamento: " + GetComponent<ChangeDifficulty>().spacing + "\tDistancia: " + Score.score);
+						
 				didFlap = false;
 			}
 
@@ -124,13 +134,30 @@ public class BirdMovement : MonoBehaviour {
 //			deathCooldown = 0.5f;
 			
 			//Score.SubPoint();
-				StartCoroutine (pauseBird());
 
+			
+			GameManager.Instancia.Log("Colidiu \t Velocidade: " + GetComponent<ChangeDifficulty>().birdVelocity + 
+						"\tEspaçamento: " + GetComponent<ChangeDifficulty>().spacing + "\tDistancia: " + Score.score);
+			
+
+			StartCoroutine (pauseBird());
+			StartCoroutine (resetCountColision ());
+
+		}
+
+		IEnumerator resetCountColision (){
+			if (canCountColision == false) {
+					canCountColision = true;
+					yield return new WaitForSeconds (10);
+					countColision = 0;
+					canCountColision = false;
+			}
 		}
 
 		IEnumerator pauseBird(){
 				if (pauseBirdActive == false) {
 						pauseBirdActive = true;
+						countColision++;
 
 						GetComponent<ChangeDifficulty> ().birdVelocity = 0.0f;
 						GetComponent<BirdMovement> ().flapSpeed = 0.0f;
@@ -160,12 +187,16 @@ public class BirdMovement : MonoBehaviour {
 						}
 						//imunidade
 						pauseBirdActive = false;
+
 				}
 
 		}
 
 		public IEnumerator esperarSegundo(){
 				contarTempo = true;
+				GameManager.Instancia.Log("Iniciou \t Velocidade: " + GetComponent<ChangeDifficulty>().birdVelocity + 
+						"\tEspaçamento: " + GetComponent<ChangeDifficulty>().spacing + "\tDistancia: " + Score.score);
+
 				int i= dateTime.Second + dateTime.Minute*60;
 				while (i != 0) {
 

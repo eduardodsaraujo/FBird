@@ -15,6 +15,7 @@ public class StartScreenScript : MonoBehaviour {
 			GetComponent<SpriteRenderer>().enabled = true;
 			Time.timeScale = 0;
 		}
+	//	GameManager.Instancia.Log("---------------------------------------------\nA partida será iniciada ao clique do jogador");
 
 
 		sawOnce = true;
@@ -26,6 +27,7 @@ public class StartScreenScript : MonoBehaviour {
 			Time.timeScale = 1;
 			GetComponent<SpriteRenderer>().enabled = false;
 			GameManager.Instancia.iniciarContagem =true;
+						GameManager.Instancia.Log("Começou a partida:");
 		}
 	}
 
